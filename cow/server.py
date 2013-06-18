@@ -103,14 +103,13 @@ class Server(object):
         logging.info("Using configuration file at {0}.".format(config.config_file))
 
         server = HTTPServer(self.application, xheaders=True)
-
-        server.bind(options.port, options.bind)
-        server.start(options.workers)
-
         server_name = self.get_server_name()
 
-        logging.info('-- %s started listening in %s:%d --' % (server_name, options.bind, options.port))
         try:
+            server.bind(options.port, options.bind)
+            server.start(int(options.workers))
+
+            logging.info('-- %s started listening in %s:%d --' % (server_name, options.bind, options.port))
             tornado.ioloop.IOLoop.instance().start()
         except KeyboardInterrupt:
             logging.info('')
