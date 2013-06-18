@@ -11,3 +11,6 @@ class SandboxServer(Server):
         return (
             ('/', TestHandler),
         )
+
+if __name__ == '__main__':
+    SandboxServer.run()

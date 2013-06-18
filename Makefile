@@ -21,4 +21,4 @@ setup:
 	@pip install -e .\[tests\]
 
 run:
-	@PYTHONPATH=.:$$PYTHONPATH python cow/server.py --port 7777 --bind 0.0.0.0 --conf ./tests/sandbox/config/local.conf -vvv --debug
+	@PYTHONPATH=.:./tests/:$$PYTHONPATH python tests/sandbox/server.py --port 4444 --bind 0.0.0.0 --conf ./tests/sandbox/config/local.conf -vvv --debug
