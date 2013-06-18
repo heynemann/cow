@@ -15,7 +15,7 @@ tests_require = [
 ]
 
 setup(
-    name='cow',
+    name='cow-framework',
     version=__version__,
     description='cow is a quick-start for tornado-powered applications (specially for apis).',
     long_description='''
