@@ -50,7 +50,7 @@ class Server(object):
         config_path = abspath(join(self.root_path.rstrip('/'), 'config'))
         module_path = join(config_path, '__init__.py')
         if exists(config_path) and exists(module_path):
-            config = imp.load_source('cowserver.config', module_path)
+            config = imp.load_source('cow.config', module_path)
             return config.Config
 
         return Config
