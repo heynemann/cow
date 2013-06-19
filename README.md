@@ -44,7 +44,7 @@ To confirm that your application is running, type the following command:
 
     curl http://localhost:4444/healthcheck/
 
-You should get as the result the string 'WORKING'.
+You should get as the result the string `WORKING`.
 
 how do I add my own handlers
 ----------------------------
@@ -72,7 +72,7 @@ Then in our server.py `Server` class, we need to add it to a route, like this:
                 ('/', HelloWorldHandler),
             )
 
-Now if you run `server.py` and access `http://localhost:4444/` you should see the string 'Hello World'.
+Now if you run `server.py` and access `http://localhost:4444/` you should see the string `Hello World`.
 
 how do I test my code
 ---------------------
