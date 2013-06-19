@@ -55,7 +55,6 @@ Suppose we have a `HelloWorldHandler` that writes `Hello World` to our users, li
 
     from tornado.web import RequestHandler
 
-
     class HelloWorldHandler(RequestHandler):
         def get(self):
             self.write("Hello World!")
@@ -64,7 +63,6 @@ Then in our server.py `Server` class, we need to add it to a route, like this:
 
     from cow.server import Server as CowServer
     from myproject.handlers.hello_world import HelloWorldHandler
-
 
     class Server(CowServer):
         def get_handlers(self):
@@ -80,9 +78,7 @@ how do I test my code
 It's really simple. You can use tornado's `AsyncHTTPTestCase`, like this:
 
     from tornado.testing import AsyncHTTPTestCase
-
     from myproject.server import Server  # the same server as in the above code
-
 
     class TestHelloWorld(AsyncHTTPTestCase):
         def get_app(self):
