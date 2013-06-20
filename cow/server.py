@@ -100,6 +100,7 @@ class Server(object):
 
         log_level = LOGS[options.verbose].upper()
         logging.basicConfig(level=getattr(logging, log_level), format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        print("Setting log-level to %s." % log_level)
 
         if not isabs(options.conf):
             logging.debug("Configuration file {0} is not absolute. Converting to abspath".format(options.conf))
