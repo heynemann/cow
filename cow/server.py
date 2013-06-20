@@ -14,6 +14,8 @@ from tornado.web import Application
 from tornado.httpserver import HTTPServer
 from derpconf.config import Config
 
+from cow.handlers.healthcheck import HealthCheckHandler
+
 
 LOGS = {
     0: 'error',
@@ -56,10 +58,16 @@ class Server(object):
         return Config
 
     def get_app(self):
-        return Application(self.get_handlers(), self.get_settings())
+        handlers = [
+            ('/healthcheck', HealthCheckHandler),
+        ]
+
+        handlers = list(self.get_handlers()) + handlers
+
+        return Application(handlers, self.get_settings())
 
     def get_handlers(self):
-        raise NotImplementedError('You must implement the get_handlers method in your Server implementation')
+        return []
 
     def get_settings(self):
         return {
