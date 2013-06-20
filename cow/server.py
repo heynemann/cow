@@ -59,7 +59,7 @@ class Server(object):
 
     def get_app(self):
         handlers = [
-            ('/healthcheck', HealthCheckHandler),
+            ('/healthcheck/?', HealthCheckHandler),
         ]
 
         handlers = list(self.get_handlers()) + handlers
