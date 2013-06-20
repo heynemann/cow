@@ -26,13 +26,18 @@ LOGS = {
 
 
 class Server(object):
-    def __init__(self, debug=False):
+    def __init__(self, debug=False, config=None):
         self.root_path = dirname(inspect.getfile(self.__class__))
         self.default_config_path = join(self.root_path, 'config', 'local.conf')
         self.debug = debug
         self.application = self.get_app()
+
         self.config_module = self.load_config_module()
-        self.application.config = self.get_config()
+
+        if config is None:
+            config = self.get_config()
+
+        self.application.config = config
 
     def get_server_name(self):
         return "Server"
