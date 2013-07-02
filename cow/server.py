@@ -88,6 +88,14 @@ class Server(object):
     def config_parser(self, parser):
         pass
 
+    def plugin_before_start(self):
+        for plugin in self.application.plugins:
+            plugin.before_start(self.application)
+
+    def plugin_after_start(self):
+        for plugin in self.application.plugins:
+            plugin.before_start(self.application)
+
     def start(self, args=None):
         if args is None:
             args = sys.argv[1:]
@@ -127,13 +135,11 @@ class Server(object):
         try:
             server.bind(options.port, options.bind)
 
-            for plugin in self.application.plugins:
-                plugin.before_start(self.application)
+            self.plugin_before_start()
 
             server.start(int(options.workers))
 
-            for plugin in self.application.plugins:
-                plugin.after_start(self.application)
+            self.plugin_after_start()
 
             logging.info('-- %s started listening in %s:%d --' % (server_name, options.bind, options.port))
             tornado.ioloop.IOLoop.instance().start()
