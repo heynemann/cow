@@ -12,6 +12,7 @@ tests_require = [
     'tox',
     'ipdb',
     'coveralls',
+    'motor',
 ]
 
 setup(

@@ -53,6 +53,9 @@ class Server(object):
     def get_config(self):
         return self.config_module()
 
+    def get_plugins(self):
+        return []
+
     def load_config_module(self):
         config_path = abspath(join(self.root_path.rstrip('/'), 'config'))
         module_path = join(config_path, '__init__.py')
@@ -95,6 +98,7 @@ class Server(object):
         parser.add_argument('--verbose', '-v', action='count', default=0, help='Log level: v=warning, vv=info, vvv=debug.')
         parser.add_argument('--debug', '-d', action='store_true', default=False, help='Indicates whether to run in debug mode.')
         parser.add_argument('--workers', '-w', type=int, default="1", help="Number of forks to run tornado with. Defaults to 1.")
+
         self.config_parser(parser)
         options = parser.parse_args(args)
 
@@ -108,24 +112,34 @@ class Server(object):
 
         logging.info("Loading configuration file at {0}...".format(options.conf))
 
-        config = Config.load(path=options.conf, conf_name=split(options.conf)[-1], lookup_paths=[
+        self.application.config = self.config_module.load(path=options.conf, conf_name=split(options.conf)[-1], lookup_paths=[
             os.curdir,
             expanduser('~'),
             '/etc/',
         ])
 
-        logging.info("Using configuration file at {0}.".format(config.config_file))
+        logging.info("Using configuration file at {0}.".format(self.application.config.config_file))
 
         server = HTTPServer(self.application, xheaders=True)
         server_name = self.get_server_name()
 
         try:
             server.bind(options.port, options.bind)
+
+            for plugin in self.get_plugins():
+                plugin.before_start(self)
+
             server.start(int(options.workers))
+
+            for plugin in self.get_plugins():
+                plugin.after_start(self)
 
             logging.info('-- %s started listening in %s:%d --' % (server_name, options.bind, options.port))
             tornado.ioloop.IOLoop.instance().start()
         except KeyboardInterrupt:
+            for plugin in self.get_plugins():
+                plugin.before_end(self)
+
             logging.info('')
             logging.info('-- %s closed by user interruption --' % server_name)
 
