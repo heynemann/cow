@@ -122,23 +122,24 @@ class Server(object):
 
         server = HTTPServer(self.application, xheaders=True)
         server_name = self.get_server_name()
+        self.application.plugins = self.get_plugins()
 
         try:
             server.bind(options.port, options.bind)
 
-            for plugin in self.get_plugins():
-                plugin.before_start(self)
+            for plugin in self.application.plugins:
+                plugin.before_start(self.application)
 
             server.start(int(options.workers))
 
-            for plugin in self.get_plugins():
-                plugin.after_start(self)
+            for plugin in self.application.plugins:
+                plugin.after_start(self.application)
 
             logging.info('-- %s started listening in %s:%d --' % (server_name, options.bind, options.port))
             tornado.ioloop.IOLoop.instance().start()
         except KeyboardInterrupt:
-            for plugin in self.get_plugins():
-                plugin.before_end(self)
+            for plugin in self.application.plugins:
+                plugin.before_end(self.application)
 
             logging.info('')
             logging.info('-- %s closed by user interruption --' % server_name)

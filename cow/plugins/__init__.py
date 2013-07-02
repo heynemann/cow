@@ -14,3 +14,7 @@ class BasePlugin(object):
     @classmethod
     def before_end(cls, server):
         pass
+
+    @classmethod
+    def before_healthcheck(cls, server, handler, callback):
+        pass

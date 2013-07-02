@@ -10,14 +10,28 @@ from cow.plugins import BasePlugin
 
 class MotorPlugin(BasePlugin):
     @classmethod
-    def after_start(cls, server):
-        host = server.application.config.get('MONGOHOST')
-        port = server.application.config.get('MONGOPORT')
+    def after_start(cls, application):
+        host = application.config.get('MONGOHOST')
+        port = application.config.get('MONGOPORT')
+        db = application.config.get('MONGODATABASE')
         logging.info("Connecting to mongodb at %s:%d" % (host, port))
-        server.mongo = motor.MotorClient(host, port).open_sync()
+        application.mongoserver = motor.MotorClient(host, port).open_sync()
+        application.mongo = application.mongoserver[db]
 
     @classmethod
-    def before_end(cls, server):
-        if hasattr(server, 'mongo'):
+    def before_end(cls, application):
+        if hasattr(application, 'mongoserver'):
             logging.info("Disconnecting from mongodb...")
-            server.mongo.disconnect()
+            application.mongoserver.disconnect()
+
+    @classmethod
+    def before_healthcheck(cls, application, callback):
+        application.mongoserver.admin.command('ping', callback=callback)
+
+    @classmethod
+    def validate(cls, result, error, *args, **kw):
+        if error is not None:
+            logging.exception(error)
+            return False
+
+        return result.get('ok', 0) == 1.0
