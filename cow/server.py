@@ -31,6 +31,7 @@ class Server(object):
         self.default_config_path = join(self.root_path, 'config', 'local.conf')
         self.debug = debug
         self.application = self.get_app()
+        self.application.plugins = self.get_plugins()
 
         self.config_module = self.load_config_module()
 
@@ -122,7 +123,6 @@ class Server(object):
 
         server = HTTPServer(self.application, xheaders=True)
         server_name = self.get_server_name()
-        self.application.plugins = self.get_plugins()
 
         try:
             server.bind(options.port, options.bind)
