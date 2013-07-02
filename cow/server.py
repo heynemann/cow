@@ -88,13 +88,17 @@ class Server(object):
     def config_parser(self, parser):
         pass
 
-    def plugin_before_start(self):
+    def plugin_before_start(self, *args, **kw):
         for plugin in self.application.plugins:
-            plugin.before_start(self.application)
+            plugin.before_start(self.application, *args, **kw)
 
-    def plugin_after_start(self):
+    def plugin_after_start(self, *args, **kw):
         for plugin in self.application.plugins:
-            plugin.before_start(self.application)
+            plugin.after_start(self.application, *args, **kw)
+
+    def plugin_before_end(self, *args, **kw):
+        for plugin in self.application.plugins:
+            plugin.before_end(self.application, *args, **kw)
 
     def start(self, args=None):
         if args is None:
@@ -144,8 +148,7 @@ class Server(object):
             logging.info('-- %s started listening in %s:%d --' % (server_name, options.bind, options.port))
             tornado.ioloop.IOLoop.instance().start()
         except KeyboardInterrupt:
-            for plugin in self.application.plugins:
-                plugin.before_end(self.application)
+            self.plugin_before_end()
 
             logging.info('')
             logging.info('-- %s closed by user interruption --' % server_name)

@@ -4,17 +4,17 @@
 
 class BasePlugin(object):
     @classmethod
-    def before_start(cls, server):
+    def before_start(cls, server, *args, **kw):
         pass
 
     @classmethod
-    def after_start(cls, server):
+    def after_start(cls, server, *args, **kw):
         pass
 
     @classmethod
-    def before_end(cls, server):
+    def before_end(cls, server, *args, **kw):
         pass
 
     @classmethod
-    def before_healthcheck(cls, server, handler, callback):
+    def before_healthcheck(cls, server, handler, callback, *args, **kw):
         pass

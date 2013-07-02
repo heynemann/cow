@@ -10,7 +10,7 @@ from cow.plugins import BasePlugin
 
 class MotorPlugin(BasePlugin):
     @classmethod
-    def after_start(cls, application):
+    def after_start(cls, application, io_loop=None, *args, **kw):
         host = application.config.get('MONGOHOST')
         port = application.config.get('MONGOPORT')
         db = application.config.get('MONGODATABASE')
@@ -19,17 +19,17 @@ class MotorPlugin(BasePlugin):
             raise RuntimeError("MONGODATABASE configuration is required.")
 
         logging.info("Connecting to mongodb at %s:%d" % (host, port))
-        application.mongoserver = motor.MotorClient(host, port).open_sync()
+        application.mongoserver = motor.MotorClient(host, port, io_loop=io_loop).open_sync()
         application.mongo = application.mongoserver[db]
 
     @classmethod
-    def before_end(cls, application):
+    def before_end(cls, application, *args, **kw):
         if hasattr(application, 'mongoserver'):
             logging.info("Disconnecting from mongodb...")
             application.mongoserver.disconnect()
 
     @classmethod
-    def before_healthcheck(cls, application, callback):
+    def before_healthcheck(cls, application, callback, *args, **kw):
         application.mongoserver.admin.command('ping', callback=callback)
 
     @classmethod

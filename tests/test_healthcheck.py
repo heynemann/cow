@@ -1,16 +1,16 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from tornado.testing import AsyncHTTPTestCase
+from cow.testing import CowTestCase
 from preggy import expect
 
 from tests.sandbox.server import SandboxServer
 from tests.sandbox.config import Config
 
 
-class TestHealthCheck(AsyncHTTPTestCase):
-    def get_app(self):
-        return SandboxServer().application
+class TestHealthCheck(CowTestCase):
+    def get_server(self):
+        return SandboxServer()
 
     def test_healthcheck(self):
         response = self.fetch('/healthcheck')
@@ -18,10 +18,10 @@ class TestHealthCheck(AsyncHTTPTestCase):
         expect(response.body).to_be_like('WORKING')
 
 
-class TestHealthCheckWithCustomString(AsyncHTTPTestCase):
-    def get_app(self):
+class TestHealthCheckWithCustomString(CowTestCase):
+    def get_server(self):
         cfg = Config(HEALTHCHECK_TEXT='SOMETHING ELSE')
-        return SandboxServer(config=cfg).application
+        return SandboxServer(config=cfg)
 
     def test_healthcheck(self):
         response = self.fetch('/healthcheck')
