@@ -14,6 +14,10 @@ class MotorPlugin(BasePlugin):
         host = application.config.get('MONGOHOST')
         port = application.config.get('MONGOPORT')
         db = application.config.get('MONGODATABASE')
+
+        if not db:
+            raise RuntimeError("MONGODATABASE configuration is required.")
+
         logging.info("Connecting to mongodb at %s:%d" % (host, port))
         application.mongoserver = motor.MotorClient(host, port).open_sync()
         application.mongo = application.mongoserver[db]
