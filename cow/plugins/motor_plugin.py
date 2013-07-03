@@ -33,7 +33,9 @@ class MotorPlugin(BasePlugin):
         application.mongoserver.admin.command('ping', callback=callback)
 
     @classmethod
-    def validate(cls, result, error, *args, **kw):
+    def validate(cls, result, *args, **kw):
+        result, error = result.args
+
         if error is not None:
             logging.exception(error)
             return False

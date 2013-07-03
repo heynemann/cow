@@ -16,7 +16,7 @@ class HealthCheckHandler(RequestHandler):
         for plugin in self.application.plugins:
             result = yield Task(plugin.before_healthcheck, self.application)
 
-            if not plugin.validate(*result.args, **result.kwargs):
+            if not plugin.validate(result):
                 self.set_status(500)
                 self.write("HEALTCHECK FAILED")
                 self.finish()
