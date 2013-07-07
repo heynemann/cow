@@ -13,7 +13,7 @@ tests_require = [
     'ipdb',
     'coveralls',
     'motor',
-    'brukva'
+    'toredis'
 ]
 
 setup(

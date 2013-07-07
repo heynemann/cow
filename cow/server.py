@@ -143,12 +143,15 @@ class Server(object):
 
             server.start(int(options.workers))
 
-            self.plugin_after_start()
+            io_loop = tornado.ioloop.IOLoop.instance()
+            self.application.io_loop = io_loop
+
+            self.plugin_after_start(io_loop=io_loop)
 
             logging.info('-- %s started listening in %s:%d --' % (server_name, options.bind, options.port))
-            tornado.ioloop.IOLoop.instance().start()
+            io_loop.start()
         except KeyboardInterrupt:
-            self.plugin_before_end()
+            self.plugin_before_end(io_loop=io_loop)
 
             logging.info('')
             logging.info('-- %s closed by user interruption --' % server_name)

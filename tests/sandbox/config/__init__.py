@@ -12,3 +12,6 @@ Config.define('REDISHOST', 'localhost', "Database configuration", "section")
 Config.define('REDISPORT', 7780, "Database configuration", "section")
 Config.define('REDISDB', 0, "Database Configuration", "section")
 Config.define('REDISPASS', None, "Database Configuration", "section")
+
+Config.define('ELASTIC_SEARCH_HOST', 'localhost', "Search configuration", "section")
+Config.define('ELASTIC_SEARCH_PORT', 9200, "Search configuration", "section")
