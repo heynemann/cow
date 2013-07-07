@@ -3,40 +3,45 @@
 
 import logging
 
-from tornadoredis import Client
+from toredis import Client
 
 from cow.plugins import BasePlugin
 
 
 class RedisPlugin(BasePlugin):
     @classmethod
+    def has_connected(cls, application):
+        def handle(*args, **kw):
+            password = application.config.get('REDISPASS', None)
+            if password:
+                application.redis.auth(password, callback=cls.handle_authenticated(application))
+            else:
+                cls.handle_authenticated(application)()
+        return handle
+
+    @classmethod
+    def handle_authenticated(cls, application):
+        def handle(*args, **kw):
+            application.redis.authenticated = True
+
+        return handle
+
+    @classmethod
     def after_start(cls, application, io_loop=None, *args, **kw):
         host = application.config.get('REDISHOST')
         port = application.config.get('REDISPORT')
-        db = int(application.config.get('REDISDB', 0))
-        password = application.config.get('REDISPASS', None)
 
         logging.info("Connecting to redis at %s:%d" % (host, port))
-        arguments = dict(
-            host=host,
-            port=port,
-            selected_db=db
-        )
 
-        if io_loop is not None:
-            arguments['io_loop'] = io_loop
-
-        if password is not None:
-            arguments['password'] = password
-
-        application.redis = Client(**arguments)
-        application.redis.connect()
+        application.redis = Client(io_loop=io_loop)
+        application.redis.authenticated = False
+        application.redis.connect(host, port, callback=cls.has_connected(application))
 
     @classmethod
     def before_end(cls, application, *args, **kw):
         if hasattr(application, 'redis'):
             logging.info("Disconnecting from redis...")
-            application.redis.disconnect()
+            del application.redis
 
     @classmethod
     def before_healthcheck(cls, application, callback, *args, **kw):
@@ -48,4 +53,4 @@ class RedisPlugin(BasePlugin):
             logging.exception("Could not connect to redis")
             return False
 
-        return bool(result)
+        return result == "PONG"
