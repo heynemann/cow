@@ -16,5 +16,9 @@ class BasePlugin(object):
         pass
 
     @classmethod
-    def before_healthcheck(cls, server, handler, callback, *args, **kw):
-        pass
+    def before_healthcheck(cls, application, callback, *args, **kw):
+        callback(True)
+
+    @classmethod
+    def validate(cls, result, *args, **kw):
+        return result

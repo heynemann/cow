@@ -15,3 +15,8 @@ Config.define('REDISPASS', None, "Database Configuration", "section")
 
 Config.define('ELASTIC_SEARCH_HOST', 'localhost', "Search configuration", "section")
 Config.define('ELASTIC_SEARCH_PORT', 9200, "Search configuration", "section")
+
+Config.define('GEOPY_GOOGLE_DOMAIN', 'maps.googleapis.com', "Google Maps domain", "GeoPy")
+Config.define('GEOPY_GOOGLE_PROTOCOL', 'http', "Google Maps protocol", "GeoPy")
+Config.define('GEOPY_GOOGLE_CLIENT_ID', None, "Google Maps API Client ID", "GeoPy")
+Config.define('GEOPY_GOOGLE_SECRET_KEY', None, "Google Maps API Secret Key", "GeoPy")
