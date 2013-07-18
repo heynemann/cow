@@ -27,7 +27,7 @@ LOGS = {
 
 class Server(object):
     def __init__(self, config=None):
-        self.root_path = dirname(inspect.getfile(self.__class__))
+        self.root_path = abspath(dirname(inspect.getfile(self.__class__)))
         self.default_config_path = join(self.root_path, 'config', 'local.conf')
 
     def get_server_name(self):
@@ -62,8 +62,9 @@ class Server(object):
         ]
 
         handlers = list(self.get_handlers()) + handlers
+        settings = self.get_settings()
 
-        return Application(handlers, self.get_settings())
+        return Application(handlers, **settings)
 
     def get_handlers(self):
         return []
