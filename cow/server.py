@@ -26,19 +26,9 @@ LOGS = {
 
 
 class Server(object):
-    def __init__(self, debug=False, config=None):
+    def __init__(self, config=None):
         self.root_path = dirname(inspect.getfile(self.__class__))
         self.default_config_path = join(self.root_path, 'config', 'local.conf')
-        self.debug = debug
-        self.application = self.get_app()
-        self.application.plugins = self.get_plugins()
-
-        self.config_module = self.load_config_module()
-
-        if config is None:
-            config = self.get_config()
-
-        self.application.config = config
 
     def get_server_name(self):
         return "Server"
@@ -115,6 +105,8 @@ class Server(object):
         self.config_parser(parser)
         options = parser.parse_args(args)
 
+        self.debug = options.debug
+
         log_level = LOGS[options.verbose].upper()
         logging.basicConfig(level=getattr(logging, log_level), format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
         print("Setting log-level to %s." % log_level)
@@ -125,6 +117,10 @@ class Server(object):
 
         logging.info("Loading configuration file at {0}...".format(options.conf))
 
+        self.config_module = self.load_config_module()
+
+        self.application = self.get_app()
+        self.application.plugins = self.get_plugins()
         self.application.config = self.config_module.load(path=options.conf, conf_name=split(options.conf)[-1], lookup_paths=[
             os.curdir,
             expanduser('~'),

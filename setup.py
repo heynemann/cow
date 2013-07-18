@@ -52,6 +52,7 @@ cow is a quick-start for tornado-powered applications (specially for apis).
     },
     entry_points={
         'console_scripts': [
+            'cow=cow.generator:main'
         ],
     },
 )
