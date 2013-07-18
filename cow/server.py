@@ -133,6 +133,8 @@ class Server(object):
         server = HTTPServer(self.application, xheaders=True)
         server_name = self.get_server_name()
 
+        io_loop = None
+
         try:
             server.bind(options.port, options.bind)
 
@@ -148,7 +150,8 @@ class Server(object):
             logging.info('-- %s started listening in %s:%d --' % (server_name, options.bind, options.port))
             io_loop.start()
         except KeyboardInterrupt:
-            self.plugin_before_end(io_loop=io_loop)
+            if io_loop is not None:
+                self.plugin_before_end(io_loop=io_loop)
 
             logging.info('')
             logging.info('-- %s closed by user interruption --' % server_name)
