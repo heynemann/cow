@@ -32,7 +32,7 @@ class Pusher(object):
         self.publisher[channel].trigger(event_name, event_data, callback=callback)
 
 
-class MotorPlugin(BasePlugin):
+class PusherPlugin(BasePlugin):
     @classmethod
     def after_start(cls, application, io_loop=None, *args, **kw):
         app_id = application.config.get('PUSHER_APP_ID')
