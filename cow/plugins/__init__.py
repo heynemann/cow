@@ -4,10 +4,6 @@
 
 class BasePlugin(object):
     @classmethod
-    def before_start(cls, server, *args, **kw):
-        pass
-
-    @classmethod
     def after_start(cls, server, *args, **kw):
         pass
 

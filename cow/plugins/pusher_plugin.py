@@ -3,31 +3,23 @@
 
 import logging
 
-import pusherclient
+#import pusherclient
 import pusher
 from tornado import ioloop
+from tornado.concurrent import return_future
 
 from cow.plugins import BasePlugin
 
 
 class Pusher(object):
-    def __init__(self, subscriber, publisher, io_loop=None):
+    def __init__(self, publisher, io_loop=None):
         self.io_loop = io_loop
         if self.io_loop is None:
             self.io_loop = ioloop.IOLoop.instance()
 
-        self.subscriber = subscriber
         self.publisher = publisher
 
-    def subscribe(self, channel, event_name, callback):
-        channel = self.subscriber.subscribe(channel)
-        channel.bind(event_name, self.handle_event(callback))
-
-    def handle_event(self, callback):
-        def handle(self, *args, **kwargs):
-            self.io_loop.add_callback(callback, *args, **kwargs)
-        return handle
-
+    @return_future
     def publish(self, channel, event_name, event_data, callback):
         self.publisher[channel].trigger(event_name, event_data, callback=callback)
 
@@ -43,10 +35,10 @@ class PusherPlugin(BasePlugin):
             raise RuntimeError("PUSHER_APP_ID, PUSHER_KEY and PUSHER_SECRET configurations are all required.")
 
         logging.info("Connecting to pusher...")
-        subscriber = pusherclient.Pusher(key)
         publisher = pusher.Pusher(app_id=app_id, key=key, secret=secret)
+        publisher.channel_type = pusher.TornadoChannel
 
-        application.pusher = Pusher(subscriber=subscriber, publisher=publisher, io_loop=io_loop)
+        application.pusher = Pusher(publisher=publisher, io_loop=io_loop)
 
     @classmethod
     def before_end(cls, application, *args, **kw):

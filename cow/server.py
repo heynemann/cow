@@ -27,8 +27,10 @@ LOGS = {
 
 class Server(object):
     def __init__(self, config=None):
+        self.debug = False
         self.root_path = abspath(dirname(inspect.getfile(self.__class__)))
         self.default_config_path = join(self.root_path, 'config', 'local.conf')
+        self.config = config
 
     def get_server_name(self):
         return "Server"
@@ -79,10 +81,6 @@ class Server(object):
     def config_parser(self, parser):
         pass
 
-    def plugin_before_start(self, *args, **kw):
-        for plugin in self.application.plugins:
-            plugin.before_start(self.application, *args, **kw)
-
     def plugin_after_start(self, *args, **kw):
         for plugin in self.application.plugins:
             plugin.after_start(self.application, *args, **kw)
@@ -90,6 +88,25 @@ class Server(object):
     def plugin_before_end(self, *args, **kw):
         for plugin in self.application.plugins:
             plugin.before_end(self.application, *args, **kw)
+
+    def initialize_app(self, conf=None):
+        if conf is None:
+            conf = self.default_config_path
+
+        self.config_module = self.load_config_module()
+
+        self.application = self.get_app()
+        self.application.plugins = self.get_plugins()
+
+        self.application.config = self.config
+        if self.application.config is None:
+            self.application.config = self.config_module.load(path=conf, conf_name=split(conf)[-1], lookup_paths=[
+                os.curdir,
+                expanduser('~'),
+                '/etc/',
+            ])
+
+            logging.info("Using configuration file at {0}.".format(self.application.config.config_file))
 
     def start(self, args=None):
         if args is None:
@@ -118,17 +135,7 @@ class Server(object):
 
         logging.info("Loading configuration file at {0}...".format(options.conf))
 
-        self.config_module = self.load_config_module()
-
-        self.application = self.get_app()
-        self.application.plugins = self.get_plugins()
-        self.application.config = self.config_module.load(path=options.conf, conf_name=split(options.conf)[-1], lookup_paths=[
-            os.curdir,
-            expanduser('~'),
-            '/etc/',
-        ])
-
-        logging.info("Using configuration file at {0}.".format(self.application.config.config_file))
+        self.initialize_app(options.conf)
 
         server = HTTPServer(self.application, xheaders=True)
         server_name = self.get_server_name()
@@ -137,8 +144,6 @@ class Server(object):
 
         try:
             server.bind(options.port, options.bind)
-
-            self.plugin_before_start()
 
             server.start(int(options.workers))
 
