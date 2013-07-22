@@ -35,8 +35,11 @@ class PusherPlugin(BasePlugin):
             raise RuntimeError("PUSHER_APP_ID, PUSHER_KEY and PUSHER_SECRET configurations are all required.")
 
         logging.info("Connecting to pusher...")
-        publisher = pusher.Pusher(app_id=app_id, key=key, secret=secret)
-        publisher.channel_type = pusher.TornadoChannel
+        pusher.app_id = app_id
+        pusher.key = key
+        pusher.secret = secret
+        pusher.channel_type = pusher.TornadoChannel
+        publisher = pusher.Pusher()
 
         application.pusher = Pusher(publisher=publisher, io_loop=io_loop)
 
