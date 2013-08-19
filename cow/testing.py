@@ -16,6 +16,7 @@ class CowTestCase(AsyncHTTPTestCase):
         self.server = self.get_server()
         self.server.debug = True
         self.server.initialize_app()
+        self.server.application.io_loop = self.io_loop
 
         self.server.plugin_after_start(io_loop=self.io_loop)
         return self.server.application
