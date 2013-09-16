@@ -17,7 +17,7 @@ class MotorEnginePlugin(BasePlugin):
         if not databases or not isinstance(databases, (dict,)):
             raise RuntimeError("MONGO_DATABASES configuration is required and should be a dictionary.")
 
-        for key, value in databases.iteritems():
+        for key, value in databases.items():
             arguments = dict(
                 db=value['database'],
                 host=value['host'],
