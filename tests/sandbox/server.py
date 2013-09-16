@@ -3,6 +3,7 @@
 
 from cow.server import Server
 from cow.plugins.motor_plugin import MotorPlugin
+from cow.plugins.motorengine_plugin import MotorEnginePlugin
 from cow.plugins.redis_plugin import RedisPlugin
 from cow.plugins.es_plugin import ESPlugin
 from cow.plugins.geopy_google_plugin import GeoPyGooglePlugin
@@ -19,6 +20,7 @@ class SandboxServer(Server):
     def get_plugins(self):
         return [
             MotorPlugin,
+            MotorEnginePlugin,
             RedisPlugin,
             ESPlugin,
             GeoPyGooglePlugin
