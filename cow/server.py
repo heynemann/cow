@@ -102,7 +102,7 @@ class Server(object):
                 '/etc/',
             ])
 
-            logging.info("Using configuration file at {0}.".format(self.application.config.config_file))
+            logging.info("Using configuration file at {0}.".format(self.config.config_file))
 
         self.application = self.get_app()
         self.application.plugins = self.get_plugins()
