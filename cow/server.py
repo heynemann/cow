@@ -95,18 +95,18 @@ class Server(object):
 
         self.config_module = self.load_config_module()
 
-        self.application = self.get_app()
-        self.application.plugins = self.get_plugins()
-
-        self.application.config = self.config
-        if self.application.config is None:
-            self.application.config = self.config_module.load(path=conf, conf_name=split(conf)[-1], lookup_paths=[
+        if self.config is None:
+            self.config = self.config_module.load(path=conf, conf_name=split(conf)[-1], lookup_paths=[
                 os.curdir,
                 expanduser('~'),
                 '/etc/',
             ])
 
             logging.info("Using configuration file at {0}.".format(self.application.config.config_file))
+
+        self.application = self.get_app()
+        self.application.plugins = self.get_plugins()
+        self.application.config = self.config
 
     def start(self, args=None):
         if args is None:
