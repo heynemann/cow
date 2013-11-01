@@ -46,6 +46,7 @@ cow is a quick-start for tornado-powered applications (specially for apis).
         'argparse',
         'derpconf',
         'tornado',
+        'webassets',
     ],
     extras_require={
         'tests': tests_require,

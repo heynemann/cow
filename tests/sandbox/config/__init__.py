@@ -20,3 +20,6 @@ Config.define('GEOPY_GOOGLE_DOMAIN', 'maps.googleapis.com', "Google Maps domain"
 Config.define('GEOPY_GOOGLE_PROTOCOL', 'http', "Google Maps protocol", "GeoPy")
 Config.define('GEOPY_GOOGLE_CLIENT_ID', None, "Google Maps API Client ID", "GeoPy")
 Config.define('GEOPY_GOOGLE_SECRET_KEY', None, "Google Maps API Secret Key", "GeoPy")
+
+Config.define('SQLALCHEMY_CONNECTION_STRING', '', "Database connection string", "SQLAlchemy")
+Config.define('SQLALCHEMY_POOL_SIZE', 10, "Database connection pool size", "SQLAlchemy")

@@ -13,6 +13,7 @@ import tornado.ioloop
 from tornado.web import Application
 from tornado.httpserver import HTTPServer
 from derpconf.config import Config
+from webassets import Environment, Bundle
 
 from cow.handlers.healthcheck import HealthCheckHandler
 
@@ -78,6 +79,9 @@ class Server(object):
             'static_path': self.static_path,
         }
 
+    def get_assets(self):
+        return {}
+
     def config_parser(self, parser):
         pass
 
@@ -88,6 +92,79 @@ class Server(object):
     def plugin_before_end(self, *args, **kw):
         for plugin in self.application.plugins:
             plugin.before_end(self.application, *args, **kw)
+
+    def initialize_assets(self):
+        assets = self.get_assets()
+        self.application.assets = assets
+
+        self.application.assets_environment = Environment(
+            directory=self.static_path,
+            url=self.application.config.STATIC_ROOT_URL,
+            debug=self.application.config.WEBASSETS_DEBUG,
+            auto_build=self.application.config.WEBASSETS_AUTO_BUILD
+        )
+
+        for output_file, asset_items in assets.items():
+            for asset_type, asset_files in asset_items.items():
+                rebased = []
+                for asset in asset_files:
+                    rebased.append(join(self.static_path, asset))
+                assets[output_file][asset_type] = rebased
+
+        asset_index = 0
+        for output_file, asset_items in assets.items():
+            is_js = False
+            is_css = False
+            bundle_items = []
+
+            if 'js' in asset_items:
+                js = Bundle(
+                    *asset_items['js'],
+                    output='out/uncompressed_%d.js' % asset_index
+                )
+                bundle_items.append(js)
+                is_js = True
+
+            if 'coffee' in asset_items:
+                coffee = Bundle(
+                    *asset_items['coffee'],
+                    filters=['coffeescript'],
+                    output='out/coffee_%d.js' % asset_index
+                )
+                bundle_items.append(coffee)
+                is_js = True
+
+            if 'css' in asset_items:
+                css = Bundle(
+                    *asset_items['css'],
+                    output='out/uncompressed_%d.css' % asset_index
+                )
+                bundle_items.append(css)
+                is_css = True
+
+            if 'scss' in asset_items:
+                scss = Bundle(
+                    *asset_items['scss'],
+                    filters=['compass'],
+                    output='out/compass_%d.css' % asset_index
+                )
+                bundle_items.append(scss)
+                is_css = True
+
+            filters = []
+            if is_js:
+                filters.append('jsmin')
+
+            if is_css:
+                filters.append('css_slimmer')
+
+            if bundle_items:
+                self.application.assets_environment.register(
+                    output_file,
+                    *bundle_items,
+                    filters=filters,
+                    output=output_file
+                )
 
     def initialize_app(self, conf=None):
         if conf is None:
@@ -105,8 +182,11 @@ class Server(object):
             logging.info("Using configuration file at {0}.".format(self.config.config_file))
 
         self.application = self.get_app()
+        self.application.server = self
         self.application.plugins = self.get_plugins()
         self.application.config = self.config
+
+        self.initialize_assets()
 
     def start(self, args=None):
         if args is None:
