@@ -43,7 +43,7 @@ class MotorEnginePlugin(BasePlugin):
             if replica_set is not None:
                 arguments['replicaSet'] = replica_set
 
-            logging.info("Connecting to mongodb at %s:%d" % (arguments['host'], arguments['port']))
+            logging.info("Connecting to mongodb at %s:%d" % (host, port))
             motorengine.connect(**arguments)
 
     @classmethod
