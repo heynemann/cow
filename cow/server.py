@@ -96,6 +96,8 @@ class Server(object):
     def initialize_assets(self):
         assets = self.get_assets()
         self.application.assets = assets
+        if not assets:
+            return
 
         self.application.assets_environment = Environment(
             directory=self.static_path,
