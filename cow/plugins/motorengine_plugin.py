@@ -22,10 +22,17 @@ class MotorEnginePlugin(BasePlugin):
                 db=value['database'],
                 host=value['host'],
                 port=int(value['port']),
-                #username=value.get('username', None),
-                #password=value.get('password', None),
                 io_loop=io_loop
             )
+
+            username = value.get('username', None)
+            password = value.get('password', None)
+
+            if username is not None:
+                arguments['username'] = username
+
+            if password is not None:
+                arguments['password'] = password
 
             arguments['alias'] = key
 
