@@ -18,21 +18,24 @@ class MotorEnginePlugin(BasePlugin):
             raise RuntimeError("MONGO_DATABASES configuration is required and should be a dictionary.")
 
         for key, value in databases.items():
-            arguments = dict(
-                db=value['database'],
-                host=value['host'],
-                port=int(value['port']),
-                io_loop=io_loop
-            )
-
+            host = value['host']
+            port = int(value['port'])
+            db = value['database']
             username = value.get('username', None)
             password = value.get('password', None)
 
-            if username is not None:
-                arguments['username'] = username
+            conn_str = "mongodb://%s:%d/%s" % (host, port, db)
 
-            if password is not None:
-                arguments['password'] = password
+            if username is not None:
+                if password is not None:
+                    conn_str = "mongodb://%s:%s@%s:%d/%s" % (username, password, host, port, db)
+                else:
+                    conn_str = "mongodb://%s@%s:%d/%s" % (username, host, port, db)
+
+            arguments = dict(
+                host=conn_str,
+                io_loop=io_loop
+            )
 
             arguments['alias'] = key
 
