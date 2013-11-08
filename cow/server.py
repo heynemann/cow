@@ -193,16 +193,18 @@ class Server(object):
 
     def handle_signals(self, io_loop):
         def handle(signal, frame):
-            if signal in (signal.SIGINT, signal.SIGHUP, signal.SIGTERM):
-                io_loop.stop()
+            io_loop.stop()
 
-                if io_loop is not None:
-                    self.plugin_before_end(io_loop=io_loop)
+            if io_loop is not None:
+                self.plugin_before_end(io_loop=io_loop)
 
-                logging.info('')
-                logging.info('-- %s closed by signal --' % str(signal))
+            logging.info('')
+            logging.info('-- %s closed by signal --' % str(signal))
+            sys.exit(1)
 
-        return handle
+        signal.signal(signal.SIGINT, handle)
+        signal.signal(signal.SIGTERM, handle)
+        signal.signal(signal.SIGHUP, handle)
 
     def start(self, args=None):
         if args is None:
@@ -249,6 +251,9 @@ class Server(object):
             self.plugin_after_start(io_loop=io_loop)
 
             logging.info('-- %s started listening in %s:%d --' % (server_name, options.bind, options.port))
+
+            self.handle_signals(io_loop)
+
             io_loop.start()
         except KeyboardInterrupt:
             if io_loop is not None:
