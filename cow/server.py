@@ -8,6 +8,7 @@ import logging
 import inspect
 import imp
 import argparse
+import signal
 
 import tornado.ioloop
 from tornado.web import Application
@@ -189,6 +190,19 @@ class Server(object):
         self.application.config = self.config
 
         self.initialize_assets()
+
+    def handle_signals(self, io_loop):
+        def handle(signal, frame):
+            if signal in (signal.SIGINT, signal.SIGHUP, signal.SIGTERM):
+                io_loop.stop()
+
+                if io_loop is not None:
+                    self.plugin_before_end(io_loop=io_loop)
+
+                logging.info('')
+                logging.info('-- %s closed by signal --' % str(signal))
+
+        return handle
 
     def start(self, args=None):
         if args is None:
