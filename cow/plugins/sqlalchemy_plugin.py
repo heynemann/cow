@@ -34,8 +34,8 @@ class SQLAlchemyPlugin(BasePlugin):
     @classmethod
     def before_healthcheck(cls, application, callback, *args, **kw):
         try:
-            result = application.sqlalchemy_db.execute("SELECT 1")
-            callback(result)
+            result = application.sqlalchemy_db.execute("SELECT 1").fetchone()
+            callback(result[0])
         except exc.OperationalError, ex:
             if ex.args[0] in (2006,   # MySQL server has gone away
                               2013,   # Lost connection to MySQL server during query
