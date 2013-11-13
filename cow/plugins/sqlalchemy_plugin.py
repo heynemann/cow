@@ -18,6 +18,7 @@ class SQLAlchemyMixin(object):
 class SQLAlchemyPlugin(BasePlugin):
     @classmethod
     def after_start(cls, application, io_loop=None, *args, **kw):
+        autoflush = application.config.get('SQLALCHEMY_AUTO_FLUSH', False)
         connstr = application.config.SQLALCHEMY_CONNECTION_STRING
         engine = create_engine(
             connstr,
@@ -29,7 +30,7 @@ class SQLAlchemyPlugin(BasePlugin):
 
         logging.info("Connecting to \"%s\" using SQLAlchemy" % connstr)
 
-        application.sqlalchemy_db = scoped_session(sessionmaker(bind=engine))
+        application.sqlalchemy_db = scoped_session(sessionmaker(bind=engine, autoflush=autoflush))
 
     @classmethod
     def before_healthcheck(cls, application, callback, *args, **kw):
