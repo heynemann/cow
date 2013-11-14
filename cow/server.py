@@ -206,6 +206,12 @@ class Server(object):
         signal.signal(signal.SIGTERM, handle)
         signal.signal(signal.SIGHUP, handle)
 
+    def after_start(self, io_loop):
+        pass
+
+    def before_end(self, io_loop):
+        pass
+
     def start(self, args=None):
         if args is None:
             args = sys.argv[1:]
@@ -249,6 +255,7 @@ class Server(object):
             self.application.io_loop = io_loop
 
             self.plugin_after_start(io_loop=io_loop)
+            self.after_start(io_loop=io_loop)
 
             logging.info('-- %s started listening in %s:%d --' % (server_name, options.bind, options.port))
 
@@ -258,6 +265,7 @@ class Server(object):
         except KeyboardInterrupt:
             if io_loop is not None:
                 self.plugin_before_end(io_loop=io_loop)
+            self.before_end(io_loop=io_loop)
 
             logging.info('')
             logging.info('-- %s closed by user interruption --' % server_name)
