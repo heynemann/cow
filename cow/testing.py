@@ -7,6 +7,7 @@ from tornado.testing import AsyncHTTPTestCase
 class CowTestCase(AsyncHTTPTestCase):
     def tearDown(self):
         self.server.plugin_before_end(io_loop=self.io_loop)
+        self.server.before_end(io_loop=self.io_loop)
         super(CowTestCase, self).tearDown()
 
     def get_server(self):
@@ -19,4 +20,5 @@ class CowTestCase(AsyncHTTPTestCase):
         self.server.application.io_loop = self.io_loop
 
         self.server.plugin_after_start(io_loop=self.io_loop)
+        self.server.after_start(io_loop=self.io_loop)
         return self.server.application
