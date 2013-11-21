@@ -30,12 +30,14 @@ class SQLAlchemyPlugin(BasePlugin):
 
         logging.info("Connecting to \"%s\" using SQLAlchemy" % connstr)
 
-        application.sqlalchemy_db = scoped_session(sessionmaker(bind=engine, autoflush=autoflush))
+        application.sqlalchemy_db_maker = sessionmaker(bind=engine, autoflush=autoflush)
+        application.get_sqlalchemy_session = lambda: scoped_session(application.sqlalchemy_db_maker)
 
     @classmethod
     def before_healthcheck(cls, application, callback, *args, **kw):
         try:
-            result = application.sqlalchemy_db.execute("SELECT 1").fetchone()
+            session = application.get_sqlalchemy_session()
+            result = session.execute("SELECT 1").fetchone()
             callback(result[0])
         except exc.OperationalError, ex:
             if ex.args[0] in (2006,   # MySQL server has gone away
