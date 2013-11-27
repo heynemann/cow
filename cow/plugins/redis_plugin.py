@@ -8,6 +8,32 @@ from toredis import Client
 from cow.plugins import BasePlugin
 
 
+class ConnectionError(RuntimeError):
+    pass
+
+
+class CowRedisClient(Client):
+    def connect(self, host='localhost', port=6379, callback=None):
+        self.host = host
+        self.port = port
+        super(CowRedisClient, self).connect(host, port, callback)
+
+    def send_message(self, args, callback=None):
+        if not self.is_connected():
+            self.connect(host=self.host, port=self.port, callback=self.handle_reconnect(args, callback))
+
+        super(CowRedisClient, self).send_message(args, callback)
+
+    def handle_reconnect(self, args, callback):
+        def handle(*args, **kw):
+            if not self.is_connected():
+                raise ConnectionError("Could not connect to redis at %s:%s... Aborting command (%s)." % (
+                    self.host, self.port, args
+                ))
+
+            self.send_message(args, callback)
+
+
 class RedisPlugin(BasePlugin):
     @classmethod
     def has_connected(cls, application):
@@ -33,7 +59,7 @@ class RedisPlugin(BasePlugin):
 
         logging.info("Connecting to redis at %s:%d" % (host, port))
 
-        application.redis = Client(io_loop=io_loop)
+        application.redis = CowRedisClient(io_loop=io_loop)
         application.redis.authenticated = False
         application.redis.connect(host, port, callback=cls.has_connected(application))
 
