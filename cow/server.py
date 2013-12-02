@@ -197,6 +197,7 @@ class Server(object):
 
             if io_loop is not None:
                 self.plugin_before_end(io_loop=io_loop)
+                self.before_end(io_loop=io_loop)
 
             logging.info('')
             logging.info('-- %s closed by signal --' % str(signal))
