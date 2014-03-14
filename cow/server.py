@@ -213,6 +213,9 @@ class Server(object):
     def before_end(self, io_loop):
         pass
 
+    def get_extra_server_parameters(self):
+        return {}
+
     def start(self, args=None):
         if args is None:
             args = sys.argv[1:]
@@ -242,7 +245,7 @@ class Server(object):
 
         self.initialize_app(options.conf)
 
-        server = HTTPServer(self.application, xheaders=True)
+        server = HTTPServer(self.application, xheaders=True, **self.get_extra_server_parameters())
         server_name = self.get_server_name()
 
         io_loop = None
