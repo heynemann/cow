@@ -44,7 +44,7 @@ class MotorEnginePlugin(BasePlugin):
                 arguments['replicaSet'] = replica_set
 
             logging.info("Connecting to mongodb at %s" % conn_str)
-            motorengine.connect(db, **arguments)
+            motorengine.connect(key, **arguments)
 
     @classmethod
     def before_end(cls, application, *args, **kw):
