@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import logging
+import sys
 
 from sqlalchemy import create_engine, exc
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -39,7 +40,8 @@ class SQLAlchemyPlugin(BasePlugin):
             session = application.get_sqlalchemy_session()
             result = session.execute("SELECT 1").fetchone()
             callback(result[0])
-        except exc.OperationalError, ex:
+        except exc.OperationalError:
+            ex = sys.exc_info()[1]
             if ex.args[0] in (2006,   # MySQL server has gone away
                               2013,   # Lost connection to MySQL server during query
                               2055):  # Lost connection to MySQL server at '%s', system error: %d
