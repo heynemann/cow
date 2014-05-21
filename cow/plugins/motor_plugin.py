@@ -14,12 +14,24 @@ class MotorPlugin(BasePlugin):
         host = application.config.get('MONGOHOST')
         port = application.config.get('MONGOPORT')
         db = application.config.get('MONGODATABASE')
+        user = application.config.get('MONGOUSER')
+        password = application.config.get('MONGOPASS')
 
         if not db:
             raise RuntimeError("MONGODATABASE configuration is required.")
 
-        logging.info("Connecting to mongodb at %s:%d" % (host, port))
-        application.mongoserver = motor.MotorClient(host, port, io_loop=io_loop).open_sync()
+        conn_str = "%s:%d/%s" % (host, port, db)
+        user_str = ""
+
+        if user is not None:
+            user_str = user
+            if password is not None:
+                user_str = "%s:%s" % (user, password)
+
+        conn = "mongodb://%s%s" % (user_str, conn_str)
+
+        logging.info("Connecting to mongodb at %s" % (conn_str))
+        application.mongoserver = motor.MotorClient(conn, io_loop=io_loop)
         application.mongo = application.mongoserver[db]
 
     @classmethod
