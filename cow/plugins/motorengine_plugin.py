@@ -17,7 +17,8 @@ class MotorEnginePlugin(BasePlugin):
         if not databases or not isinstance(databases, (dict,)):
             raise RuntimeError("MONGO_DATABASES configuration is required and should be a dictionary.")
 
-        for key, value in databases.items():
+        items = databases.items()
+        for index, (key, value) in enumerate(items):
             host = value['host']
             port = int(value['port'])
             db = value['database']
@@ -44,7 +45,13 @@ class MotorEnginePlugin(BasePlugin):
                 arguments['replicaSet'] = replica_set
 
             logging.info("Connecting to mongodb at %s" % conn_str)
-            motorengine.connect(key, **arguments)
+
+            motorengine.connect(db, **arguments)
+
+            if index == 0:
+                arguments.pop('alias')
+                motorengine.connect(db, **arguments)
+
 
     @classmethod
     def before_end(cls, application, *args, **kw):
