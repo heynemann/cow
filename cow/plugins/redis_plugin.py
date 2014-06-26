@@ -36,11 +36,11 @@ class CowRedisClient(Client):
 
 class RedisPlugin(BasePlugin):
     @classmethod
-    def has_connected(cls, application):
+    def has_connected(cls, application, connection):
         def handle(*args, **kw):
             password = application.config.get('REDISPASS', None)
             if password:
-                application.redis.auth(password, callback=cls.handle_authenticated(application))
+                connection.auth(password, callback=cls.handle_authenticated(application))
             else:
                 cls.handle_authenticated(application)()
         return handle
@@ -61,7 +61,12 @@ class RedisPlugin(BasePlugin):
 
         application.redis = CowRedisClient(io_loop=io_loop)
         application.redis.authenticated = False
-        application.redis.connect(host, port, callback=cls.has_connected(application))
+        application.redis.connect(host, port, callback=cls.has_connected(application, application.redis))
+
+        if application.config.REDISPUBSUB:
+            application.redis_pub_sub = CowRedisClient(io_loop=io_loop)
+            application.redis_pub_sub.authenticated = False
+            application.redis_pub_sub.connect(host, port, callback=cls.has_connected(application, application.redis_pub_sub))
 
     @classmethod
     def before_end(cls, application, *args, **kw):
@@ -80,3 +85,11 @@ class RedisPlugin(BasePlugin):
             return False
 
         return result == "PONG"
+
+    @classmethod
+    def define_configurations(cls, config):
+        config.define('REDISHOST', 'localhost', "Redis server host.", "Redis")
+        config.define('REDISPORT', 7780, "Redis server port", "Redis")
+        config.define('REDISDB', 0, "Redis server database index", "Redis")
+        config.define('REDISPASS', None, "Redis server database password", "Redis")
+        config.define('REDISPUBSUB', False, "Indicates whether a second connection to Redis server should be created for pubsub", "Redis")

@@ -53,3 +53,11 @@ class MotorPlugin(BasePlugin):
             return False
 
         return result.get('ok', 0) == 1.0
+
+    @classmethod
+    def define_configurations(cls, config):
+        config.define('MONGOHOST', 'localhost', "MongoDB host", "MongoDB")
+        config.define('MONGOPORT', 6667, "MongoDB port", "MongoDB")
+        config.define('MONGODATABASE', 'test-db', "MongoDB Database Name", "MongoDB")
+        config.define('MONGOUSER', None, "MongoDB Database authentication username", "MongoDB")
+        config.define('MONGOPASS', None, "MongoDB Database authentication password", "MongoDB")

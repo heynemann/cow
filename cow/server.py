@@ -189,6 +189,12 @@ class Server(object):
         self.application.plugins = self.get_plugins()
         self.application.config = self.config
 
+        for plugin in self.application.plugins:
+            plugin.define_configurations(self.config)
+
+        if self.application.plugins:
+            self.application.config.reload()
+
         self.initialize_assets()
 
     def handle_signals(self, io_loop):

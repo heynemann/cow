@@ -18,3 +18,7 @@ class BasePlugin(object):
     @classmethod
     def validate(cls, result, *args, **kw):
         return result
+
+    @classmethod
+    def define_configurations(cls, config):
+        pass
