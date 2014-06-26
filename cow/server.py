@@ -216,7 +216,7 @@ class Server(object):
     def get_extra_server_parameters(self):
         return {}
 
-    def start(self, args=None):
+    def parse_arguments(self, args=None):
         if args is None:
             args = sys.argv[1:]
 
@@ -230,7 +230,10 @@ class Server(object):
 
         self.config_parser(parser)
         options = parser.parse_args(args)
+        return options
 
+    def start(self, args=None):
+        options = self.parse_arguments()
         self.debug = options.debug
 
         log_level = LOGS[options.verbose].upper()
