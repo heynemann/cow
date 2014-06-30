@@ -54,10 +54,11 @@ class MongoEnginePlugin(BasePlugin):
 
     @classmethod
     def before_end(cls, application, *args, **kw):
-        databases = application.config.get('MONGO_DATABASES')
-        for key in databases.keys():
-            logging.info("Disconnecting from mongodb[%s]..." % key)
-            mongoengine.disconnect(alias=key)
+        pass
+        #databases = application.config.get('MONGO_DATABASES')
+        #for key in databases.keys():
+            #logging.info("Disconnecting from mongodb[%s]..." % key)
+            #mongoengine.disconnect(alias=key)
 
     @classmethod
     def before_healthcheck(cls, application, callback, *args, **kw):
