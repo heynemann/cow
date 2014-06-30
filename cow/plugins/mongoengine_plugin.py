@@ -75,3 +75,7 @@ class MongoEnginePlugin(BasePlugin):
             return False
 
         return result.get('ok', 0) == 1.0
+
+    @classmethod
+    def define_configurations(cls, config):
+        config.define('MONGO_DATABASES', None, "Dictionary holding all the mongodb connections to be made.", "MotorEngine")
