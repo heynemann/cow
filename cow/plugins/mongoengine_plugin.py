@@ -2,9 +2,11 @@
 # -*- coding: utf-8 -*-
 
 import logging
+import sys
 
 import mongoengine
 import mongoengine.connection
+from pymongo.errors import AutoReconnect
 
 from cow.plugins import BasePlugin
 
@@ -65,16 +67,14 @@ class MongoEnginePlugin(BasePlugin):
         databases = application.config.get('MONGO_DATABASES')
         for key in databases.keys():
             conn = mongoengine.connection.get_connection(alias=key).connection
-            conn.admin.command('ping', callback=callback)
+            try:
+                callback(conn.command('ping'))
+            except AutoReconnect:
+                logging.exception(sys.exc_info()[1])
+                callback({})
 
     @classmethod
     def validate(cls, result, *args, **kw):
-        result, error = result.args
-
-        if error is not None:
-            logging.exception(error)
-            return False
-
         return result.get('ok', 0) == 1.0
 
     @classmethod
