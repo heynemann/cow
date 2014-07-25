@@ -32,8 +32,8 @@ class GandalfPlugin(BasePlugin):
 
     @classmethod
     def validate(cls, result, *args, **kw):
-        if result:
-            logging.error("Gandalf healthcheck failed with %s" % result.body)
+        if not result:
+            logging.error("Gandalf healthcheck failed...")
             return False
 
         return True
