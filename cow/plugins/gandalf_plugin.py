@@ -18,7 +18,7 @@ class GandalfPlugin(BasePlugin):
         logging.info("Connecting to gandalf at %s:%d" % (host, port))
 
         http_client = AsyncHTTPClient(io_loop or application.io_loop)
-        application.gandalf = client(host, port, http_client.fetch)
+        application.gandalf = client.AsyncTornadoGandalfClient(host, port, http_client.fetch)
 
     @classmethod
     def before_end(cls, application, *args, **kw):
