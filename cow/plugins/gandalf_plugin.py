@@ -2,10 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import logging
-from json import loads
 
-import tornadoes
-from tornado.httpclient import AsyncHTTPClient, HTTPRequest
+from tornado.httpclient import AsyncHTTPClient
 import gandalf.tornado_cli as client
 
 from cow.plugins import BasePlugin
