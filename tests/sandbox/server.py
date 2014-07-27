@@ -25,7 +25,7 @@ class SandboxServer(Server):
             ESPlugin,
             MotorPlugin,
             RedisPlugin,
-            PusherPlugin,
+            # PusherPlugin,  # removed until pusher supports python 3+
             GandalfPlugin,
             SQLAlchemyPlugin,
             MotorEnginePlugin,
