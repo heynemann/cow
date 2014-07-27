@@ -1,0 +1,14 @@
+REVOKE ALL ON SCHEMA public FROM cow;
+DROP DATABASE IF EXISTS cow;
+DROP ROLE cow;
+
+CREATE USER cow with encrypted password 'cow' LOGIN
+  SUPERUSER INHERIT CREATEDB CREATEROLE;
+
+CREATE DATABASE cow
+  WITH OWNER = cow
+       ENCODING = 'UTF8'
+       TABLESPACE = pg_default
+       TEMPLATE = template0;
+
+GRANT ALL ON SCHEMA public TO cow;
