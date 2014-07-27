@@ -3,6 +3,7 @@ python:
   - "2.6"
   - "2.7"
   - "3.3"
+  - "3.4"
   - "pypy"
 
 install:
@@ -21,6 +22,7 @@ install:
 
   # install python requirements
   - pip install coveralls
+  - pip install https://github.com/heynemann/gandalf-client/archive/master.zip
   - pip install -e .[tests]
 
 script:
