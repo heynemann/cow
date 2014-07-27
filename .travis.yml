@@ -35,6 +35,4 @@ after_success:
 
 matrix:
   allow_failures:
-    - python: 3.3
-    - python: 3.4
-    - python: pypy
+    - python: 3.3, 3.4, pypy
