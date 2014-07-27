@@ -21,7 +21,8 @@ tests_require = [
     'sqlalchemy',
     'redis',
     'mongoengine',
-    'tornado_geopy'
+    'tornado_geopy',
+    'mysql-python',
 ]
 
 setup(
