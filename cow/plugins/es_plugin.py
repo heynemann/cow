@@ -41,7 +41,7 @@ class ESPlugin(BasePlugin):
             logging.error('Elastic Search healthcheck failed with %s' % result.body)
             return False
 
-        result = loads(result.body)
+        result = loads(str(result.body))
         return result['status'] in ['green', 'yellow']
 
     @classmethod
