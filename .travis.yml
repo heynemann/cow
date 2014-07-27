@@ -23,7 +23,7 @@ install:
   # install python requirements
   - wget http://dev.mysql.com/get/Downloads/Connector-Python/mysql-connector-python_2.0.0-1ubuntu12.04_all.deb
   - sudo dpkg -i mysql-connector-python_2.0.0-1ubuntu12.04_all.deb
-  - python -c "import MySQLdb; print MySQLdb.version_info"
+  - python -c "import MySQLdb; print (MySQLdb.version_info)"
   - pip install coveralls
   - pip install https://github.com/heynemann/gandalf-client/archive/master.zip
   - pip install -e .[tests]
