@@ -17,6 +17,7 @@ install:
 
   - sudo apt-get update
   - sudo apt-get install -y mongodb-10gen elasticsearch redis-server gandalf-server
+  - sudo /etc/init.d/elasticsearch start
 
   # install python requirements
   - pip install coveralls
