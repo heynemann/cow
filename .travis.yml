@@ -22,6 +22,7 @@ install:
 
   # install python requirements
   - pip install coveralls
+  - pip install https://github.com/heynemann/tornado-es/archive/master.zip
   - pip install https://github.com/heynemann/gandalf-client/archive/master.zip
   - pip install -e .[tests]
 
