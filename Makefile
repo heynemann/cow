@@ -20,6 +20,9 @@ toxpypy:
 	@PYTHONPATH=.:$$PYTHONPATH PATH=$$PATH:~/.pythonbrew/pythons/Python-2.6.*/bin/:~/.pythonbrew/pythons/Python-2.7.*/bin/:~/.pythonbrew/pythons/Python-3.0.*/bin/:~/.pythonbrew/pythons/Python-3.1.*/bin/:~/.pythonbrew/pythons/Python-3.2.3/bin/:~/.pythonbrew/pythons/Python-3.3.0/bin/ tox -e pypy
 
 setup:
+	@pip install https://github.com/heynemann/tornado-es/archive/master.zip
+	@pip install https://github.com/heynemann/pusher_client_python/archive/master.zip
+	@pip install https://github.com/heynemann/gandalf-client/archive/master.zip
 	@pip install -e .\[tests\]
 
 run:

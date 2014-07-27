@@ -32,3 +32,9 @@ script:
 
 after_success:
   - coveralls
+
+matrix:
+  allow_failures:
+    - python: 3.3
+    - python: 3.4
+    - python: pypy
