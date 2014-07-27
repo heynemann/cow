@@ -10,7 +10,7 @@ from tests.sandbox.config import Config
 class TestCase(CowTestCase):
     def get_config(self):
         return dict(
-            SQLALCHEMY_CONNECTION_STRING="mysql+mysqldb://root@localhost:3306/test_cow",
+            SQLALCHEMY_CONNECTION_STRING="postgresql://cow:cow@localhost:5432/cow",
             SQLALCHEMY_POOL_SIZE=1,
             SQLALCHEMY_POOL_MAX_OVERFLOW=0,
             SQLALCHEMY_AUTO_FLUSH=True,

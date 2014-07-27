@@ -53,7 +53,7 @@ mongo: kill_mongo
 	@mongod --dbpath /tmp/cow_test/mongotestdata --logpath /tmp/cow_test/mongotestdata/mongotestlog --port 4445 --quiet --smallfiles --oplogSize 128 &
 
 drop:
-	@mysql -u root -e "DROP DATABASE IF EXISTS test_cow; CREATE DATABASE IF NOT EXISTS test_cow"
+	@sudo -u postgres psql -d postgres -f drop.sql
 
 gandalf: kill_gandalf
 	@gandalf-server -config="./gandalf.conf" &
