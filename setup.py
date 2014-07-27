@@ -22,7 +22,6 @@ tests_require = [
     'redis',
     'mongoengine',
     'tornado_geopy',
-    'mysql-python',
 ]
 
 setup(
