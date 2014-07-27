@@ -1,16 +1,12 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from cow.testing import CowTestCase
 from preggy import expect
 
-from tests.sandbox.server import SandboxServer
-from tests.sandbox.config import Config
+from tests import TestCase
 
 
-class TestHealthCheck(CowTestCase):
-    def get_server(self):
-        return SandboxServer()
+class TestHealthCheck(TestCase):
 
     def test_healthcheck(self):
         response = self.fetch('/healthcheck')
@@ -18,10 +14,11 @@ class TestHealthCheck(CowTestCase):
         expect(response.body).to_be_like('WORKING')
 
 
-class TestHealthCheckWithCustomString(CowTestCase):
-    def get_server(self):
-        cfg = Config(HEALTHCHECK_TEXT='SOMETHING ELSE')
-        return SandboxServer(config=cfg)
+class TestHealthCheckWithCustomString(TestCase):
+    def get_config(self):
+        cfg = super(TestHealthCheckWithCustomString, self).get_config()
+        cfg['HEALTHCHECK_TEXT'] = 'SOMETHING ELSE'
+        return cfg
 
     def test_healthcheck(self):
         response = self.fetch('/healthcheck')

@@ -13,7 +13,15 @@ tests_require = [
     'ipdb',
     'coveralls',
     'motor',
-    'toredis'
+    'toredis',
+    'motorengine',
+    'tornadoes',
+    'pusher',
+    'gandalf-client',
+    'sqlalchemy',
+    'redis',
+    'mongoengine',
+    'tornado_geopy'
 ]
 
 setup(

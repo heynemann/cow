@@ -27,7 +27,7 @@ class CowRedisClient(Client):
     def handle_reconnect(self, args, callback):
         def handle(*args, **kw):
             if not self.is_connected():
-                raise ConnectionError("Could not connect to redis at %s:%s... Aborting command (%s)." % (
+                raise ConnectionError('Could not connect to redis at %s:%s... Aborting command (%s).' % (
                     self.host, self.port, args
                 ))
 
@@ -57,7 +57,7 @@ class RedisPlugin(BasePlugin):
         host = application.config.get('REDISHOST')
         port = application.config.get('REDISPORT')
 
-        logging.info("Connecting to redis at %s:%d" % (host, port))
+        logging.info('Connecting to redis at %s:%d' % (host, port))
 
         application.redis = CowRedisClient(io_loop=io_loop)
         application.redis.authenticated = False
@@ -71,7 +71,7 @@ class RedisPlugin(BasePlugin):
     @classmethod
     def before_end(cls, application, *args, **kw):
         if hasattr(application, 'redis'):
-            logging.info("Disconnecting from redis...")
+            logging.info('Disconnecting from redis...')
             del application.redis
 
     @classmethod
@@ -81,15 +81,17 @@ class RedisPlugin(BasePlugin):
     @classmethod
     def validate(cls, result, *args, **kw):
         if not result:
-            logging.exception("Could not connect to redis")
+            logging.exception('Could not connect to redis')
             return False
 
-        return result == "PONG"
+        return result == 'PONG'
 
     @classmethod
     def define_configurations(cls, config):
-        config.define('REDISHOST', 'localhost', "Redis server host.", "Redis")
-        config.define('REDISPORT', 7780, "Redis server port", "Redis")
-        config.define('REDISDB', 0, "Redis server database index", "Redis")
-        config.define('REDISPASS', None, "Redis server database password", "Redis")
-        config.define('REDISPUBSUB', False, "Indicates whether a second connection to Redis server should be created for pubsub", "Redis")
+        config.define('REDISHOST', 'localhost', 'Redis server host.', 'Redis')
+        config.define('REDISPORT', 7780, 'Redis server port', 'Redis')
+        config.define('REDISDB', 0, 'Redis server database index', 'Redis')
+        config.define('REDISPASS', None, 'Redis server database password', 'Redis')
+        config.define(
+            'REDISPUBSUB', False,
+            'Indicates whether a second connection to Redis server should be created for pubsub', 'Redis')

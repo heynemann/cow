@@ -16,7 +16,7 @@ class ESPlugin(BasePlugin):
         host = application.config.get('ELASTIC_SEARCH_HOST')
         port = application.config.get('ELASTIC_SEARCH_PORT')
 
-        logging.info("Connecting to elastic search at %s:%d" % (host, port))
+        logging.info('Connecting to elastic search at %s:%d' % (host, port))
 
         application.elastic_search = tornadoes.ESConnection(host, port, io_loop=io_loop)
         application.elastic_search_host = host
@@ -25,21 +25,27 @@ class ESPlugin(BasePlugin):
     @classmethod
     def before_end(cls, application, *args, **kw):
         if hasattr(application, 'elastic_search'):
-            logging.info("Disconnecting from elastic search...")
+            logging.info('Disconnecting from elastic search...')
             del application.elastic_search
 
     @classmethod
     def before_healthcheck(cls, application, callback, *args, **kw):
-        url = "http://%s:%d/_cluster/health?pretty=true" % (application.elastic_search_host, application.elastic_search_port)
+        url = 'http://%s:%d/_cluster/health?pretty=true' % (application.elastic_search_host, application.elastic_search_port)
         client = AsyncHTTPClient(application.io_loop)
-        request_http = HTTPRequest(url, method="GET")
+        request_http = HTTPRequest(url, method='GET')
         client.fetch(request=request_http, callback=callback)
 
     @classmethod
     def validate(cls, result, *args, **kw):
         if result.code != 200:
-            logging.error("Elastic Search healthcheck failed with %s" % result.body)
+            logging.error('Elastic Search healthcheck failed with %s' % result.body)
             return False
 
         result = loads(result.body)
         return result['status'] in ['green', 'yellow']
+
+    @classmethod
+    def define_configurations(cls, config):
+        config.define('ELASTIC_SEARCH_HOST', 'localhost', 'ElasticSearch host', 'ElasticSearch')
+        config.define('ELASTIC_SEARCH_PORT', 9200, 'ElasticSearch port', 'ElasticSearch')
+        config.define('ELASTIC_SEARCH_INDEX', None, 'ElasticSearch index', 'ElasticSearch')

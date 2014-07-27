@@ -19,6 +19,9 @@ class CowTestCase(AsyncHTTPTestCase):
         self.server.initialize_app()
         self.server.application.io_loop = self.io_loop
 
+        if self.server.application.plugins:
+            self.server.application.config.reload()
+
         self.server.plugin_after_start(io_loop=self.io_loop)
         self.server.after_start(io_loop=self.io_loop)
         return self.server.application
