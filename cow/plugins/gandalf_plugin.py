@@ -4,6 +4,8 @@
 import logging
 
 from tornado.httpclient import AsyncHTTPClient
+from tornado.concurrent import is_future
+import tornado.gen as gen
 import gandalf.tornado_cli as client
 
 from cow.plugins import BasePlugin
@@ -27,8 +29,12 @@ class GandalfPlugin(BasePlugin):
             del application.gandalf
 
     @classmethod
-    def before_healthcheck(cls, application, callback, *args, **kw):
-        application.gandalf.healthcheck(callback=callback)
+    @gen.coroutine
+    def before_healthcheck(cls, application, *args, **kw):
+        result = application.gandalf.healthcheck()
+        if is_future(result):
+            result = yield result
+        raise gen.Return(result)
 
     @classmethod
     def validate(cls, result, *args, **kw):
