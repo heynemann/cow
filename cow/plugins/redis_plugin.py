@@ -40,15 +40,15 @@ class RedisPlugin(BasePlugin):
         def handle(*args, **kw):
             password = application.config.get('REDISPASS', None)
             if password:
-                connection.auth(password, callback=cls.handle_authenticated(application))
+                connection.auth(password, callback=cls.handle_authenticated(connection))
             else:
-                cls.handle_authenticated(application)()
+                cls.handle_authenticated(connection)()
         return handle
 
     @classmethod
-    def handle_authenticated(cls, application):
+    def handle_authenticated(cls, connection):
         def handle(*args, **kw):
-            application.redis.authenticated = True
+            connection.authenticated = True
 
         return handle
 
@@ -73,6 +73,9 @@ class RedisPlugin(BasePlugin):
         if hasattr(application, 'redis'):
             logging.info('Disconnecting from redis...')
             del application.redis
+        if application.config.REDISPUBSUB and hasattr(application, 'redis_pub_sub'):
+            logging.info('Disconnecting from redis pub sub...')
+            del application.redis_pub_sub
 
     @classmethod
     def before_healthcheck(cls, application, callback, *args, **kw):
